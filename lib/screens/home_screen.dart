@@ -10,14 +10,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int totalSeconds = 1500;
+  static const twentyFiveMinutes = 1500;
+  int totalSeconds = twentyFiveMinutes;
   bool isRunning = false;
+  int totalPomodoros = 0;
   late Timer timer;
 
   void onTick(Timer timer) {
-    setState(() {
-      totalSeconds = totalSeconds - 1;
-    });
+    if (totalSeconds == 0) {
+      //totalSeconds가 0 이면 타이머 중지되었을때 속성 초기화
+      setState(() {
+        totalPomodoros = totalPomodoros + 1;
+        isRunning = false;
+        totalSeconds = twentyFiveMinutes;
+      });
+      timer.cancel();
+    } else {
+      setState(() {
+        totalSeconds = totalSeconds - 1;
+      });
+    }
   }
 
 // 사용자가 버튼을 누를때만 타이머 생성
@@ -39,6 +51,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  String format(int seconds) {
+    var duration = Duration(seconds: seconds);
+    // string으로 타입 변경  -> 0:25:00.000000
+    print(duration.toString());
+    // .을 기준으로 문자열 분리 후, 리스트로 반환 ->[0:25:00, 000000]
+    print(duration.toString().split('.'));
+    // 리스트에서 첫 번째 인덱스 선택 후 , 필요한 부분 슬라이싱 => 25:00
+    print(duration.toString().split('.').first.substring(2, 7));
+    return duration.toString().split('.').first.substring(2, 7);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               alignment: Alignment.bottomCenter,
               child: Text(
-                '$totalSeconds',
+                format(totalSeconds),
                 style: TextStyle(
                   color: Theme.of(context).cardColor,
                   fontSize: 89,
@@ -103,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          '0',
+                          '$totalPomodoros  ',
                           style: TextStyle(
                             fontSize: 58,
                             color: Theme.of(context)
