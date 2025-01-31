@@ -51,14 +51,23 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void onReset() {
+    setState(() {
+      totalPomodoros = totalPomodoros + 1;
+      isRunning = false;
+      totalSeconds = twentyFiveMinutes;
+    });
+    timer.cancel();
+  }
+
   String format(int seconds) {
     var duration = Duration(seconds: seconds);
     // string으로 타입 변경  -> 0:25:00.000000
-    print(duration.toString());
+    // print(duration.toString());
     // .을 기준으로 문자열 분리 후, 리스트로 반환 ->[0:25:00, 000000]
-    print(duration.toString().split('.'));
+    // print(duration.toString().split('.'));
     // 리스트에서 첫 번째 인덱스 선택 후 , 필요한 부분 슬라이싱 => 25:00
-    print(duration.toString().split('.').first.substring(2, 7));
+    // print(duration.toString().split('.').first.substring(2, 7));
     return duration.toString().split('.').first.substring(2, 7);
   }
 
@@ -88,16 +97,28 @@ class _HomeScreenState extends State<HomeScreen> {
           Flexible(
             // flex 숫자 크기에 따라 보여지는 화면 비율 달라짐 -> 반응형으로 만들때 용이
             flex: 3,
-            child: Center(
-              child: IconButton(
-                // isrunning이 true면 오른쪽 항
-                onPressed: isRunning ? onPausePressed : onStartPressed,
-                icon: Icon(isRunning
-                    ? Icons.pause_circle_outline
-                    : Icons.play_circle_outline),
-                iconSize: 98,
-                color: Theme.of(context).cardColor,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  // isrunning이 true면 오른쪽 항
+                  onPressed: isRunning ? onPausePressed : onStartPressed,
+                  icon: Icon(isRunning
+                      ? Icons.pause_circle_outline
+                      : Icons.play_circle_outline),
+                  iconSize: 98,
+                  color: Theme.of(context).cardColor,
+                ),
+                TextButton(
+                    onPressed: onReset,
+                    child: Text(
+                      'reset',
+                      style: TextStyle(
+                        color: Theme.of(context).cardColor,
+                        fontSize: 20,
+                      ),
+                    ))
+              ],
             ),
           ),
           Flexible(
